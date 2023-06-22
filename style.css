@@ -129,6 +129,8 @@ textarea {
   border-radius: 5px;
   border: none;
   outline: none;
+  resize: none;
+  overflow: hidden; /* Hides scrollbar */
 }
 
 button {

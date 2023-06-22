@@ -1,11 +1,12 @@
-let bot = './assets/bot.svg' 
-let user = './assets/user.svg'
+const bot = './assets/bot.svg' 
+const user = './assets/user.svg'
 
 const form = document.querySelector('form')
 const chatContainer = document.querySelector('#chat_container')
 
 let loadInterval
 
+// Prints dots in a sequental manner as it waits for a response
 let loader = element => {
     element.textContent = ''
 
@@ -18,6 +19,7 @@ let loader = element => {
     }, 300)
 }
 
+// Mimics how ChatGPT displays its responses, one character at a time
 let typeText = (element, text) => {
     let index = 0
 
@@ -31,7 +33,7 @@ let typeText = (element, text) => {
     }, 20)
 }
 
-
+// Each AI response gets an unique ID
 let generateUniqueId = () => {
     const timestamp = Date.now()
     const randomNumber = Math.random()
@@ -43,7 +45,7 @@ let generateUniqueId = () => {
 let chatStripe = (isAi, value, uniqueId) => {
     return (
         `
-        <div class="wrapper ${isAi && 'ai'}">
+        <div class="wrapper ${isAi ? 'ai' : 'user'}">
             <div class="chat">
                 <div class="profile">
                     <img 
@@ -58,11 +60,21 @@ let chatStripe = (isAi, value, uniqueId) => {
     )
 }
 
+let setEnableForm = b => {
+    if (b) {
+        form.querySelector('textarea').removeAttribute('disabled')
+        form.querySelector('button').removeAttribute('disabled')
+    } else {
+        form.querySelector('textarea').setAttribute('disabled', '')
+        form.querySelector('button').setAttribute('disabled', '')
+    }
+}
+
 const handleSubmit = async e => {
     e.preventDefault()
     const data = new FormData(form)
 
-    chatContainer.innerHTML += chatStripe(false, data.get('prompt'))
+    chatContainer.innerHTML += chatStripe(false, data.get('prompt'), 0)
 
     form.reset()
 
@@ -74,11 +86,21 @@ const handleSubmit = async e => {
     const messageDiv = document.getElementById(uniqueId)
 
     loader(messageDiv)
+
+    // disables form until a response is received
+    setEnableForm(false)
+
+    // should focus the form at the end
+    // setEnableForm(true)
+    // form.querySelector('textarea').focus() 
 }
 
 form.addEventListener('submit', handleSubmit)
-form.addEventListener('keyup', e => {
+form.addEventListener('keydown', e => {
     if (e.keyCode == 13) {
         handleSubmit(e)
+        return // returns so a newline is ignored
     }
 })
+
+form.querySelector('textarea').focus()

@@ -99,7 +99,7 @@ form.addEventListener('submit', handleSubmit)
 form.addEventListener('keydown', e => {
     if (e.keyCode == 13) {
         handleSubmit(e)
-        return // returns so a newline is ignored
+        return // returns a newline is ignored
     }
 })
 
